@@ -13,7 +13,7 @@ import {
   Kind,
   ParseOptions,
 } from 'graphql';
-import { DataSource } from '../datasource';
+import { DataSource } from 'kdeoliveira.types';
 import { PersistedQueryOptions } from './graphqlOptions';
 import {
   symbolExecutionDispatcherWillResolveField,
@@ -55,15 +55,16 @@ import {
 import { Dispatcher } from './utils/dispatcher';
 import {
   InMemoryLRUCache,
-  KeyValueCache,
   PrefixingKeyValueCache,
 } from '../cache';
+
+import {KeyValueCache} from "kdeoliveira.types";
 
 export { GraphQLRequest, GraphQLResponse, GraphQLRequestContext };
 
 import createSHA from './utils/createSHA';
 import { HttpQueryError } from './runHttpQuery';
-import { Headers } from '../env';
+import { Headers } from 'kdeoliveira.types';
 
 export const APQ_CACHE_PREFIX = 'apq:';
 

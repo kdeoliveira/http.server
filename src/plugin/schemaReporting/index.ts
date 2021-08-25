@@ -1,7 +1,7 @@
 import os from 'os';
 import { v4 as uuidv4 } from 'uuid';
 import { printSchema, validateSchema, buildSchema } from 'graphql';
-import type { fetch } from '../../env';
+import type { fetch } from 'kdeoliveira.types';
 import { SchemaReporter } from './schemaReporter';
 import { schemaIsFederated } from '../schemaIsFederated';
 import { SchemaReport } from './operations';

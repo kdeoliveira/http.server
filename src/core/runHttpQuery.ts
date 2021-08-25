@@ -1,4 +1,4 @@
-import { Request, Headers } from '../env';
+import { Request, Headers } from 'kdeoliveira.types';
 import {
   default as GraphQLOptions,
   resolveGraphqlOptions,
@@ -11,9 +11,9 @@ import {
   GraphQLResponse,
 } from './requestPipeline';
 import { ApolloServerPlugin } from '../plugin/pluginBase';
-import { WithRequired, GraphQLExecutionResult } from '../types';
+import { WithRequired, GraphQLExecutionResult, ValueOrPromise } from '../types';
 import { newCachePolicy } from './cachePolicy';
-import { ValueOrPromise } from 'env/typescript-utility-types';
+// import  {ValueOrPromise}  from 'kdeoliveira.types/dist/env';
 
 export interface HttpQueryRequest {
   method: string;

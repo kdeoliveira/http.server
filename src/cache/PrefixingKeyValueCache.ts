@@ -1,4 +1,4 @@
-import { KeyValueCache, KeyValueCacheSetOptions } from './KeyValueCache';
+import { KeyValueCache, KeyValueCacheSetOptions } from 'kdeoliveira.types';
 
 // PrefixingKeyValueCache wraps another cache and adds a prefix to all keys used
 // by all operations.  This allows multiple features to share the same

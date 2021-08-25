@@ -2,13 +2,13 @@ import { addMocksToSchema } from '@graphql-tools/mock';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import loglevel from 'loglevel';
 import {
-  GraphQLSchema,
   GraphQLError,
   ValidationContext,
   FieldDefinitionNode,
   DocumentNode,
   ParseOptions,
   print,
+  GraphQLSchema,
 } from 'graphql';
 import resolvable, { Resolvable } from '@josephg/resolvable';
 import {
@@ -40,7 +40,7 @@ import {
   APQ_CACHE_PREFIX,
 } from './requestPipeline';
 
-import { Headers } from '../env';
+import { Headers } from 'kdeoliveira.types';
 import { buildServiceDefinition } from '../tools/apollo-tools';
 import { Logger, SchemaHash, ApolloConfig } from '../types';
 import { cloneObject } from './runHttpQuery';
@@ -90,15 +90,15 @@ type ServerState =
   | { phase: 'initialized with gateway'; gateway: GatewayInterface }
   | { phase: 'starting'; barrier: Resolvable<void> }
   | {
-      phase: 'invoking serverWillStart';
-      barrier: Resolvable<void>;
-      schemaDerivedData: SchemaDerivedData;
-    }
+    phase: 'invoking serverWillStart';
+    barrier: Resolvable<void>;
+    schemaDerivedData: SchemaDerivedData;
+  }
   | { phase: 'failed to start'; error: Error; loadedSchema: boolean }
   | {
-      phase: 'started';
-      schemaDerivedData: SchemaDerivedData;
-    }
+    phase: 'started';
+    schemaDerivedData: SchemaDerivedData;
+  }
   | { phase: 'stopping'; barrier: Resolvable<void> }
   | { phase: 'stopped'; stopError: Error | null };
 
@@ -116,7 +116,7 @@ export class ApolloServerBase {
   public requestOptions: Partial<GraphQLServerOptions<any>> =
     Object.create(null);
 
-  private context?: Context | ContextFunction;
+  protected context?: Context | ContextFunction;
   private apolloConfig: ApolloConfig;
   protected plugins: ApolloServerPlugin[] = [];
 
@@ -290,12 +290,18 @@ export class ApolloServerBase {
       // used to have a 'schema' field that was publicly accessible immediately
       // after construction, though that field never actually worked with
       // gateways.)
-      this.state = {
-        phase: 'initialized with schema',
-        schemaDerivedData: this.generateSchemaDerivedData(
-          this.maybeAddMocksToConstructedSchema(this.constructSchema()),
-        ),
-      };
+      try{
+
+        this.state = {
+          phase: 'initialized with schema',
+          schemaDerivedData: this.generateSchemaDerivedData(
+            this.maybeAddMocksToConstructedSchema(this.constructSchema()),
+          ),
+        };
+      }
+      catch(err: any){
+        throw new Error(err)
+      }
     }
 
     // The main entry point (createHandler) to serverless frameworks generally
@@ -343,7 +349,7 @@ export class ApolloServerBase {
     if (this.serverlessFramework()) {
       throw new Error(
         'When using an ApolloServer subclass from a serverless framework ' +
-          "package, you don't need to call start(); just call createHandler().",
+        "package, you don't need to call start(); just call createHandler().",
       );
     }
 
@@ -370,8 +376,8 @@ export class ApolloServerBase {
         initialState.phase === 'initialized with schema'
           ? initialState.schemaDerivedData
           : this.generateSchemaDerivedData(
-              await this.startGatewayAndLoadSchema(initialState.gateway),
-            );
+            await this.startGatewayAndLoadSchema(initialState.gateway),
+          );
       loadedSchema = true;
       this.state = {
         phase: 'invoking serverWillStart',
@@ -457,7 +463,7 @@ export class ApolloServerBase {
       }
 
       this.state = { phase: 'started', schemaDerivedData };
-    } catch (error : any) {
+    } catch (error: any) {
       this.state = { phase: 'failed to start', error, loadedSchema };
       throw error;
     } finally {
@@ -531,8 +537,8 @@ export class ApolloServerBase {
     if (this.state.phase !== 'started') {
       throw new Error(
         'You must `await server.start()` before calling `server.' +
-          methodName +
-          '()`',
+        methodName +
+        '()`',
       );
     }
     // XXX do we need to do anything special for stopping/stopped?
@@ -546,8 +552,8 @@ export class ApolloServerBase {
   private logStartupError(err: Error) {
     this.logger.error(
       'An error occurred during Apollo Server startup. All GraphQL requests ' +
-        'will now fail. The startup error was: ' +
-        ((err && err.message) || err),
+      'will now fail. The startup error was: ' +
+      ((err && err.message) || err),
     );
   }
 
@@ -625,6 +631,7 @@ export class ApolloServerBase {
   }
 
   private generateSchemaDerivedData(schema: GraphQLSchema): SchemaDerivedData {
+
     const schemaHash = generateSchemaHash(schema!);
 
     // Initialize the document store.  This cannot currently be disabled.
@@ -635,6 +642,8 @@ export class ApolloServerBase {
       schemaHash,
       documentStore,
     };
+
+
   }
 
   public async stop() {
@@ -672,7 +681,7 @@ export class ApolloServerBase {
       // if it's helpful.)
       await Promise.all([...this.toDispose].map((dispose) => dispose()));
       await Promise.all([...this.toDisposeLast].map((dispose) => dispose()));
-    } catch (stopError : any) {
+    } catch (stopError: any) {
       this.state = { phase: 'stopped', stopError };
       return;
     }
@@ -720,9 +729,9 @@ export class ApolloServerBase {
         } else {
           this.logger.warn(
             'You have specified an Apollo key but have not specified a graph ref; usage ' +
-              'reporting is disabled. To enable usage reporting, set the `APOLLO_GRAPH_REF` ' +
-              'environment variable to `your-graph-id@your-graph-variant`. To disable this ' +
-              'warning, install `ApolloServerPluginUsageReportingDisabled`.',
+            'reporting is disabled. To enable usage reporting, set the `APOLLO_GRAPH_REF` ' +
+            'environment variable to `your-graph-id@your-graph-variant`. To disable this ' +
+            'warning, install `ApolloServerPluginUsageReportingDisabled`.',
           );
         }
       }
@@ -750,9 +759,9 @@ export class ApolloServerBase {
           if (enabledViaEnvVar) {
             throw new Error(
               "You've enabled schema reporting by setting the APOLLO_SCHEMA_REPORTING " +
-                'environment variable to true, but you also need to provide your ' +
-                'Apollo API key, via the APOLLO_KEY environment ' +
-                'variable or via `new ApolloServer({apollo: {key})',
+              'environment variable to true, but you also need to provide your ' +
+              'Apollo API key, via the APOLLO_KEY environment ' +
+              'variable or via `new ApolloServer({apollo: {key})',
             );
           }
         } else if (enabledViaEnvVar) {
@@ -863,14 +872,14 @@ export class ApolloServerBase {
    * @param req express.Request
    * @param res express.Resposne
    */
-  protected async setContext({req, res} : {req : Request, res: Response}){
-    let context = this.context ? this.context : {req, res};
+  protected async setContext({ req, res }: { req: Request, res: Response }) {
+    let context = this.context ? this.context : { req, res };
 
-    try{
+    try {
       context = typeof this.context === 'function' ?
-                await this.context({req, res} || {}) : context;
+        await this.context({ req, res } || {}) : context;
     }
-    catch(error: any){
+    catch (error: any) {
       context = () => {
         throw error
       };

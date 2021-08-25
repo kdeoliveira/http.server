@@ -5,9 +5,16 @@ import {
   GraphQLRequestContext,
   GraphQLRequestContextWillSendResponse,
 } from '../../types';
-import type { fetch } from '../../env';
+import type { fetch } from 'kdeoliveira.types';
 import type { Trace } from 'apollo-reporting-protobuf';
-import { RequestAgent } from 'env/fetch';
+
+import { Agent as HttpAgent } from 'http';
+import { Agent as HttpsAgent } from 'https';
+
+
+
+export type RequestAgent = HttpAgent | HttpsAgent;
+
 
 export interface ApolloServerPluginUsageReportingOptions<TContext> {
   //#region Configure exactly which data should be sent to Apollo.

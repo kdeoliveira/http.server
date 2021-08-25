@@ -1,5 +1,5 @@
 
-import { fetch, Headers, Request } from '../../env';
+import { fetch, Headers, Request } from 'kdeoliveira.types';
 import { GraphQLRequest, Logger } from '../../types';
 import { print } from 'graphql';
 import {

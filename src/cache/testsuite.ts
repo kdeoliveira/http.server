@@ -1,4 +1,4 @@
-import { KeyValueCache } from './KeyValueCache';
+import { KeyValueCache } from 'kdeoliveira.types';
 
 /**
  * runKeyValueCacheTests is a function you can call from a test that exercises

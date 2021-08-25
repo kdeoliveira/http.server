@@ -1,4 +1,4 @@
-import '../env';
+// import '../env';
 
 export { runHttpQuery, HttpQueryRequest, HttpQueryError } from './runHttpQuery';
 

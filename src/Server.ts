@@ -45,7 +45,7 @@ export interface ApolloServerExpressConfig extends Config {
   context?: ContextFunction<ExpressContext, Context> | Context;
 }
 
-export class ApolloServer extends ApolloServerBase {
+export default class ApolloServer extends ApolloServerBase {
   constructor(config: ApolloServerExpressConfig) {
     super(config);
   }
@@ -62,8 +62,8 @@ export class ApolloServer extends ApolloServerBase {
 
   public applyMiddleware({ app, ...rest }: ServerRegistration) {
     // getMiddleware calls this too, but we want the right method name in the error
-    this.assertStarted('applyMiddleware');
-
+    this.assertStarted('applyMiddleware');  
+        
     app.use(this.getMiddleware(rest));
   }
 
@@ -72,12 +72,14 @@ export class ApolloServer extends ApolloServerBase {
   // Hapi) which must be `async`.
   public getMiddleware({
     path,
-    // cors,
+    cors,
     bodyParserConfig,
     disableHealthCheck,
     onHealthCheck,
   }: GetMiddlewareOptions = {}): express.Router {
     if (!path) path = '/graphql';
+
+    
 
     this.assertStarted('getMiddleware');
 
@@ -85,6 +87,8 @@ export class ApolloServer extends ApolloServerBase {
     // Connect-compatible because express.Router just implements the same
     // middleware interface that Connect and Express share!
     const router = express.Router();
+
+
 
     if (!disableHealthCheck) {
       router.use('/.well-known/apollo/server-health', (req, res) => {
@@ -110,25 +114,23 @@ export class ApolloServer extends ApolloServerBase {
 
     // Note that we don't just pass all of these handlers to a single app.use call
     // for 'connect' compatibility.
-    // if (cors === true) {
-    //   router.use(path, corsMiddleware<corsMiddleware.CorsRequest>());
-    // } else if (cors !== false) {
-    //   router.use(path, corsMiddleware(cors));
-    // }
+    if (cors === true) {
+      router.use(path, corsMiddleware<corsMiddleware.CorsRequest>());
+    } else if (cors instanceof Object) {
+      router.use(path, corsMiddleware(cors));
+    }
 
     if (bodyParserConfig === true) {
       router.use(path, json());
-    } else if (bodyParserConfig !== false) {
+    } else if (bodyParserConfig instanceof Object) {
       router.use(path, json(bodyParserConfig));
     }
 
     const landingPage = this.getLandingPage();
     router.use(path, (req, res, next) => {
-      
-      if (landingPage && prefersHtml(req)) {
-
-        this.setContext({req, res});
+      if ( (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') && landingPage && prefersHtml(req)) {
         
+        this.setContext({req, res});
         res.setHeader('Content-Type', 'text/html');
         res.write(landingPage.html);
         res.end();
@@ -153,6 +155,8 @@ export class ApolloServer extends ApolloServerBase {
         }
         return;
       }
+
+      
 
 
       runHttpQuery([], {

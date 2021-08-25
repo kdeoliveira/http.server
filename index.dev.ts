@@ -1,5 +1,5 @@
 import "reflect-metadata"
-import {ApolloServer} from "./src/Server";
+import ApolloServer from "./src";
 import express from "express";
 import {buildSchemaSync} from "type-graphql";
 import { PersonResolver } from "./src/test.resolver";
@@ -20,7 +20,10 @@ const main = async () => {
     
     await server.start();
     
-    server.applyMiddleware({app});
+    server.applyMiddleware({app, cors: {
+        credentials: true,
+        origin: "*"
+    }, bodyParserConfig: true});
     
     app.listen(9000, () => console.log("STARTED"));
 }

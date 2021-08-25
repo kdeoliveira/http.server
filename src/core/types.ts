@@ -19,7 +19,7 @@ import type { ApolloServerPlugin } from '../plugin/pluginBase';
 import type { GraphQLSchemaModule } from '../tools/apollo-tools';
 export type { GraphQLSchemaModule };
 
-export { KeyValueCache } from '../cache';
+export { KeyValueCache } from 'kdeoliveira.types';
 
 export type Context<T = object> = T;
 export type ContextFunction<FunctionParams = any, ProducedContext = object> = (

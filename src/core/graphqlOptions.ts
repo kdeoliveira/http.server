@@ -7,8 +7,9 @@ import {
   GraphQLFormattedError,
   ParseOptions,
 } from 'graphql';
-import { KeyValueCache, InMemoryLRUCache } from '../cache';
-import { DataSource } from '../datasource';
+import { KeyValueCache} from 'kdeoliveira.types';
+import {InMemoryLRUCache} from "../cache";
+import { DataSource } from 'kdeoliveira.types';
 import { ApolloServerPlugin } from '../plugin/pluginBase';
 import {
   GraphQLExecutor,

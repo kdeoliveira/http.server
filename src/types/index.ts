@@ -1,4 +1,4 @@
-import { Request, Response } from '../env';
+import { Request, Response } from 'kdeoliveira.types';
 import {
   GraphQLSchema,
   ValidationContext,
@@ -11,7 +11,7 @@ import {
 } from 'graphql';
 
 // This seems like it could live in this package too.
-import { KeyValueCache } from '../cache';
+import { KeyValueCache } from 'kdeoliveira.types';
 import { Trace } from 'apollo-reporting-protobuf';
 
 export type BaseContext = Record<string, any>;

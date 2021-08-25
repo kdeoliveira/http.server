@@ -3,7 +3,7 @@ import { gzip } from 'zlib';
 import retry from 'async-retry';
 import { defaultUsageReportingSignature } from 'apollo-graphql';
 import { Report, ReportHeader, Trace } from 'apollo-reporting-protobuf';
-import { Response, fetch, Headers } from '../../env';
+import { Response, fetch, Headers } from 'kdeoliveira.types';
 import {
   GraphQLRequestListener,
   GraphQLServerListener,
